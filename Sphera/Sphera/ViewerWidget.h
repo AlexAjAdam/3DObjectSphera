@@ -1,5 +1,7 @@
 #pragma once
 #include <QtWidgets>
+#include "SpheraClasses.h"
+
 class ViewerWidget :public QWidget {
 	Q_OBJECT
 private:
@@ -9,7 +11,8 @@ private:
 	QRgb* data = nullptr;
 	QPainter* painter = nullptr;
 
-	QVector<QPoint> points;
+	QVector<Vertex> points;
+
 
 public:
 	ViewerWidget(QString viewerName, QSize imgSize, QWidget* parent = Q_NULLPTR);

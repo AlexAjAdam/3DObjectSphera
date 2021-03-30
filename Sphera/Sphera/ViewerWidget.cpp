@@ -111,12 +111,25 @@ void ViewerWidget::loadDataFromVTKFile()
 		msgBox.exec();
 	}
 
-	for (int i = 0; i < fileLines.size(); i++)
+	QStringList list = fileLines[4].split(QLatin1Char(' '));
+	int pointsSize = list.at(1).toInt();
+	//qDebug() << pointsSize;
+
+	//QVector<Vertex> points; 
+
+	for (int i = 5; i < pointsSize+5; i++)
 	{
-		QStringList list1 = fileLines[i].split(QLatin1Char(','));
-		//e.setLoginName(list1.at(0));
-		qDebug() << list1;
+		Vertex point;
+		QStringList list1 = fileLines[i].split(QLatin1Char(' '));
+		point.setX(list1.at(0).toFloat());
+		point.setY(list1.at(1).toFloat());
+		point.setZ(list1.at(2).toFloat());
+		points.push_back(Vertex());
 	}
+
+	QStringList list3 = fileLines[pointsSize+5].split(QLatin1Char(' '));
+	int facesSize = list3.at(1).toInt();
+	qDebug() << facesSize;
 }
 
 //Slots
