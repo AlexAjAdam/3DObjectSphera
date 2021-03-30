@@ -124,12 +124,15 @@ void ViewerWidget::loadDataFromVTKFile()
 		point.setX(list1.at(0).toFloat());
 		point.setY(list1.at(1).toFloat());
 		point.setZ(list1.at(2).toFloat());
-		points.push_back(Vertex());
+		points.push_back(point);
 	}
 
-	QStringList list3 = fileLines[pointsSize+5].split(QLatin1Char(' '));
+	//vertexes = points;
+
+	/*QStringList list3 = fileLines[pointsSize+5].split(QLatin1Char(' '));
 	int facesSize = list3.at(1).toInt();
-	qDebug() << facesSize;
+	qDebug() << facesSize;*/
+
 }
 
 //Slots

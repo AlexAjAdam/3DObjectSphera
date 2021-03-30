@@ -11,8 +11,8 @@ private:
 	QRgb* data = nullptr;
 	QPainter* painter = nullptr;
 
-	QVector<Vertex> points;
-
+	QVector<Vertex> vertexes;
+	//QVector<Vertex> points;
 
 public:
 	ViewerWidget(QString viewerName, QSize imgSize, QWidget* parent = Q_NULLPTR);

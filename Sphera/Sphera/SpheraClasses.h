@@ -1,4 +1,4 @@
-#pragma once
+
 #include <QtWidgets>
 
 class WEdge;
@@ -11,7 +11,7 @@ private:
 public:
 	Vertex() { x = 0; y = 0; z = 0; edge = nullptr; }
 	Vertex(const Vertex &point) { x = point.x; y = point.y; z = point.z; edge = nullptr; }
-	//Vertex(float x1, float y1, float z1) { x = x1; y = y1; z = z1; edge = nullptr; }
+	Vertex(float x1, float y1, float z1) { x = x1; y = y1; z = z1; edge = nullptr; }
 	Vertex(float x1, float y1, float z1, WEdge* edge1) { x = x1; y = y1; z = z1; edge = edge1; }
 
 	void setVertex(float x1, float y1, float z1) { x = x1; y = y1; z = z1; }
@@ -57,7 +57,7 @@ private:
 public:
 
 	WEdge() { originVertex = nullptr; endVertex = nullptr; rightFace = nullptr; leftFace = nullptr; prevEdgeRight = nullptr; prevEdgeLeft = nullptr; nextEdgeRight = nullptr; nextEdgeLeft = nullptr; }
-	WEdge(const WEdge& edge) { originVertex = edge.originVertex; endVertex = edge.endVertex; rightFace = edge.rightFace; leftFace = edge.leftFace; prevEdgeLeft = edge.prevEdgeRight; prevEdgeLeft = edge.prevEdgeLeft; nextEdgeRight = edge.nextEdgeRight; nextEdgeLeft = edge.nextEdgeLeft; }
+	WEdge(const WEdge& edge) { originVertex = edge.originVertex; endVertex = edge.endVertex; rightFace = edge.rightFace; leftFace = edge.leftFace; prevEdgeRight = edge.prevEdgeRight; prevEdgeLeft = edge.prevEdgeLeft; nextEdgeRight = edge.nextEdgeRight; nextEdgeLeft = edge.nextEdgeLeft; }
 	WEdge(Vertex* origin, Face* fR, Face* fL, WEdge* prevER, WEdge* prevEL, WEdge* nextER, WEdge* nextEL) { originVertex = origin; rightFace = fR; leftFace = fL; prevEdgeRight = prevER; prevEdgeLeft = prevEL; nextEdgeRight = nextER; nextEdgeLeft = nextEL; }
 
 	void setOriginVertex(float x, float y, float z) { originVertex->setVertex(x, y, z); }
