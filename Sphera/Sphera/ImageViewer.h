@@ -20,6 +20,9 @@ private:
 	QSettings settings;
 	QMessageBox msgBox;
 
+
+	QVector<Vertex> points = QVector<Vertex>();
+
 	//ViewerWidget functions
 	ViewerWidget* getViewerWidget(int tabId);
 	ViewerWidget* getCurrentViewerWidget();

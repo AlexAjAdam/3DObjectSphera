@@ -11,9 +11,6 @@ private:
 	QRgb* data = nullptr;
 	QPainter* painter = nullptr;
 
-	QVector<Vertex> vertexes;
-	//QVector<Vertex> points;
-
 public:
 	ViewerWidget(QString viewerName, QSize imgSize, QWidget* parent = Q_NULLPTR);
 	~ViewerWidget();
@@ -44,7 +41,7 @@ public:
 
 	//3D Object Sphere
 
-	void loadDataFromVTKFile();
+	void loadDataFromVTKFile(QVector<Vertex> points);
 
 public slots:
 	void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;

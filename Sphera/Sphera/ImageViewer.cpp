@@ -4,6 +4,14 @@ ImageViewer::ImageViewer(QWidget* parent)
 	: QMainWindow(parent), ui(new Ui::ImageViewerClass)
 {
 	ui->setupUi(this);
+
+	ui->menuBar->setDisabled(true);
+
+	int width = 500;
+	int height = 500;
+	QString name = "Scatch";
+	openNewTabForImg(new ViewerWidget(name, QSize(width, height)));
+	ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
 //ViewerWidget functions
@@ -263,5 +271,5 @@ void ImageViewer::on_pushButtonGenerate_clicked()
 	ViewerWidget* w = getCurrentViewerWidget();
 	int division = ui->spinBox->value();
 
-	w->loadDataFromVTKFile();
+	w->loadDataFromVTKFile(points);
 }

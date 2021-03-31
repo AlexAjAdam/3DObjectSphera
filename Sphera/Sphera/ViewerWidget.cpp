@@ -77,7 +77,7 @@ void ViewerWidget::clear(QColor color)
 	update();
 }
 
-void ViewerWidget::loadDataFromVTKFile()
+void ViewerWidget::loadDataFromVTKFile(QVector<Vertex> points)
 {
 	QVector<QString> fileLines;
 	QString fileName = "octahedron.vtk";
