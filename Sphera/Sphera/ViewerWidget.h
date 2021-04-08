@@ -41,7 +41,7 @@ public:
 
 	//3D Object Sphere
 
-	void loadDataFromVTKFile(QVector<Vertex> points);
+	void loadDataFromVTKFile(QVector<Vertex*> points, QVector<HEdge*> edges, QVector<Face*> faces);
 
 public slots:
 	void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;

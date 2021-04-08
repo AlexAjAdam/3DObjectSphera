@@ -14,6 +14,14 @@ ImageViewer::ImageViewer(QWidget* parent)
 	ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
+ImageViewer::~ImageViewer()
+{
+	for (int i = 0; i < points.size(); i++)
+	{
+		delete points[i];
+	}
+}
+
 //ViewerWidget functions
 ViewerWidget* ImageViewer::getViewerWidget(int tabId)
 {
@@ -271,5 +279,5 @@ void ImageViewer::on_pushButtonGenerate_clicked()
 	ViewerWidget* w = getCurrentViewerWidget();
 	int division = ui->spinBox->value();
 
-	w->loadDataFromVTKFile(points);
+	w->loadDataFromVTKFile(points, edges, faces);
 }

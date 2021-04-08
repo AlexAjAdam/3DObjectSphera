@@ -12,6 +12,7 @@ class ImageViewer : public QMainWindow
 
 public:
 	ImageViewer(QWidget* parent = Q_NULLPTR);
+	~ImageViewer();
 
 private:
 	Ui::ImageViewerClass* ui;
@@ -21,7 +22,9 @@ private:
 	QMessageBox msgBox;
 
 
-	QVector<Vertex> points = QVector<Vertex>();
+	QVector<Vertex*> points = QVector<Vertex*>();
+	QVector<HEdge*> edges = QVector<HEdge*>();
+	QVector<Face*> faces = QVector<Face*>();
 
 	//ViewerWidget functions
 	ViewerWidget* getViewerWidget(int tabId);

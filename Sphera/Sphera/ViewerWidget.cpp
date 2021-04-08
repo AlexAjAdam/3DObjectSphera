@@ -77,7 +77,7 @@ void ViewerWidget::clear(QColor color)
 	update();
 }
 
-void ViewerWidget::loadDataFromVTKFile(QVector<Vertex> points)
+void ViewerWidget::loadDataFromVTKFile(QVector<Vertex*> points, QVector<HEdge*> edges, QVector<Face*> faces)
 {
 	QVector<QString> fileLines;
 	QString fileName = "octahedron.vtk";
@@ -113,25 +113,43 @@ void ViewerWidget::loadDataFromVTKFile(QVector<Vertex> points)
 
 	QStringList list = fileLines[4].split(QLatin1Char(' '));
 	int pointsSize = list.at(1).toInt();
-	//qDebug() << pointsSize;
-
-	//QVector<Vertex> points; 
+	//qDebug() << pointsSize; 
 
 	for (int i = 5; i < pointsSize+5; i++)
 	{
-		Vertex point;
-		QStringList list1 = fileLines[i].split(QLatin1Char(' '));
-		point.setX(list1.at(0).toFloat());
-		point.setY(list1.at(1).toFloat());
-		point.setZ(list1.at(2).toFloat());
+		Vertex* point = new Vertex;
+		QStringList list = fileLines[i].split(QLatin1Char(' '));
+		point->setX(list.at(0).toFloat());
+		point->setY(list.at(1).toFloat());
+		point->setZ(list.at(2).toFloat());
 		points.push_back(point);
 	}
 
-	//vertexes = points;
+	QStringList list3 = fileLines[pointsSize+6].split(QLatin1Char(' '));
+	int polygoneSize = list3.at(1).toInt();
+	//qDebug() << facesSize;
 
-	/*QStringList list3 = fileLines[pointsSize+5].split(QLatin1Char(' '));
-	int facesSize = list3.at(1).toInt();
-	qDebug() << facesSize;*/
+	/*for (int i = 0; i < polygoneSize; i++)
+	{
+		int firstID, secondID, thirdID;
+		QStringList list = fileLines[i].split(QLatin1Char(' '));
+		firstID = list.at(1).toInt();
+		secondID = list.at(2).toInt();
+		thirdID = list.at(3).toInt();
+
+		for (int i = 0; i < points.size(); i++)
+		{
+			WEdge edge1, edge2, edge3; Face face;
+			points[firstID];
+			points[secondID];
+			points[thirdID];
+			edge1.setOriginVertex(points[firstID]); edge1.setEndVertex(points[second]);
+			edge2.setOriginVertex(points[secondID]); edge2.setEndVertex(points[thirdID]);
+			edge3.setOriginVertex(points[thirdID]); edge3.setEndVertex(points[firstID]);
+			edges.push_back(edge1); edges.push_back(edge2); edges.push_back(edge3);
+		}
+
+	}*/
 
 }
 
