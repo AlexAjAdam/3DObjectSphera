@@ -27,6 +27,8 @@ public:
 
 	QVector3D getVertex() { return QVector3D(x, y, z); }
 
+	void printVertex() { qDebug() << "(" << x << "," << y << "," << z << ")"; }
+
 };
 
 class Face {
@@ -61,7 +63,7 @@ public:
 	HEdge(Vertex* origin, Face* f, HEdge* prevE, HEdge* nextE, HEdge* pairE) { originVertex = origin; face = f; prevEdge = prevE; nextEdge = nextE; pair = pairE; }
 
 	void setOriginVertex(float x, float y, float z) { originVertex->setVertex(x, y, z); }
-	void setOriginVertex(Vertex point) { originVertex->setVertex(point.getX(), point.getY(), point.getZ()); }
+	void setOriginVertex(Vertex* point) { originVertex = point; }
 	void setFace(Face* f) { face = f; }
 	void setPrevEdge(HEdge* e) { prevEdge = e; }
 	void setNextEdge(HEdge* e) { nextEdge = e; }
@@ -73,4 +75,16 @@ public:
 	HEdge* getNextEdge() { return nextEdge; }
 	HEdge* getPairEdge() { return pair; }
 
+	void printEdge() 
+	{ 
+		qDebug() << "OriginVertex (" << originVertex->getX() << "," << originVertex->getY() << "," << originVertex->getZ() << ")";
+		qDebug() << "Previous Edge {origin Vertex} (" << prevEdge->getOriginVertex()->getX() << "," << prevEdge->getOriginVertex()->getY() << "," << prevEdge->getOriginVertex()->getZ() << ")}";
+		qDebug() << "Next Edge {origin Vertex} (" << nextEdge->getOriginVertex()->getX() << "," << nextEdge->getOriginVertex()->getY() << "," << nextEdge->getOriginVertex()->getZ() << ")}";
+		qDebug() << "Pair Edge {origin Vertex} (" << pair->getOriginVertex()->getX() << "," << pair->getOriginVertex()->getY() << "," << pair->getOriginVertex()->getZ() << ")}";
+		qDebug() << "Face {origin Vertex} (" << face->getEdge()->getOriginVertex()->getX() << "," << face->getEdge()->getOriginVertex()->getY() << "," << face->getEdge()->getOriginVertex()->getZ() << ")}";
+	}
+
+	void printEdgeOriginVertex() {
+		qDebug() << "OriginVertex (" << originVertex->getX() << "," << originVertex->getY() << "," << originVertex->getZ() << ")";
+	}
 };
