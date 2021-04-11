@@ -344,7 +344,9 @@ void ImageViewer::loadDataFromVTK()
 		QStringList list = fileLines[i].split(QLatin1Char(' '));
 		first = list.at(1).toInt(); second = list.at(2).toInt(); third = list.at(3).toInt();
 
-		HEdge* edge1 = new HEdge; HEdge* edge2 = new HEdge; HEdge* edge3 = new HEdge;
+		HEdge* edge1 = new HEdge; 
+		HEdge* edge2 = new HEdge; 
+		HEdge* edge3 = new HEdge;
 		Face* face = new Face;
 
 		edge1->setOriginVertex(points[first]);
@@ -353,11 +355,11 @@ void ImageViewer::loadDataFromVTK()
 		points[second]->setEdge(edge2);
 		edge3->setOriginVertex(points[third]);
 		points[third]->setEdge(edge3);
-		face->setEdge(edge1);
-
+		
 		edge1->setPrevEdge(edge3);
 		edge1->setNextEdge(edge2);
 		edge1->setFace(face);
+		face->setEdge(edge1);
 
 		edge2->setPrevEdge(edge1);
 		edge2->setNextEdge(edge3);
@@ -373,50 +375,49 @@ void ImageViewer::loadDataFromVTK()
 		faces.push_back(face);
 	}
 
-	for (int i = 0; i < edges.size(); i++) //funguje iba pre octahedron
-	{
-		if (i == 0)
-		{
-			edges[0]->setPairEdge(edges[12]);
-			edges[12]->setPairEdge(edges[0]);
-		}
-		if (i == 2) // o +/-8
-		{
-			edges[i]->setPairEdge(edges[i + 8]);
-			edges[i + 8]->setPairEdge(edges[i]);
-		}
-		if (i == 1 || i == 4 || i == 7) // o +/-4
-		{
-			edges[i]->setPairEdge(edges[i + 4]);
-			edges[i + 4]->setPairEdge(edges[i]);
-		}
-		if (i == 14 || i == 17 || i == 20) //o +/-2
-		{
-			edges[i]->setPairEdge(edges[i + 2]);
-			edges[i + 2]->setPairEdge(edges[i]);
-		}
-		if (i == 3 || i == 6 || i == 9)// o +/-12
-		{
-			edges[i]->setPairEdge(edges[i + 12]);
-			edges[i + 12]->setPairEdge(edges[i]);
-		}
-		if (i == 13) //o +/-10
-		{
-			edges[i]->setPairEdge(edges[i + 10]);
-			edges[i + 10]->setPairEdge(edges[i]);
-		}
-	}
+	pairEdges();
 
-	/*for (int i = 0; i < edges.size(); i++)
+	for (int i = 0; i < edges.size(); i++)
 	{
 		edges[i]->printEdge();
 		qDebug() << " ";
-	}*/
+	}
+
 }
 
-void ImageViewer::divide(int division)
+void ImageViewer::pairEdges()
 {
 	for (int i = 0; i < edges.size(); i++)
+	{
+		Vertex* start1; Vertex* end1;
+
+		start1 = edges[i]->getOriginVertex();
+		end1 = edges[i]->getNextEdge()->getOriginVertex();
+
+		for (int j = 0; j < edges.size(); j++)
+		{
+			Vertex* start2; Vertex* end2;
+
+			start2 = edges[j]->getOriginVertex();
+			end2 = edges[j]->getNextEdge()->getOriginVertex();
+
+			if (start1 == end2 && start2 == end1)
+			{
+				edges[i]->setPairEdge(edges[j]);
+				edges[j]->setPairEdge(edges[i]);
+			}
+		}
+
+		if (edges[i]->getPairEdge()==nullptr)
+		{
+			qDebug() << "chybna hrana";
+		}
+	}
+}
+
+void ImageViewer::divide()
+{
+	/*for (int i = 0; i < edges.size(); i++)
 	{
 		edges[i]->printEdge();
 		qDebug() << " ";
@@ -425,113 +426,294 @@ void ImageViewer::divide(int division)
 	{
 		points[i]->printVertex();
 		qDebug() << " ";
+	}*/
+
+	QVector<HEdge*> edges2 = QVector<HEdge*>();
+	QVector<HEdge*> dividedEdges = QVector<HEdge*>();
+	QVector<Face*> faces2 = QVector<Face*>();
+
+
+	for (int i = 0; i < faces.size(); i++)
+	{
+		Vertex* middle1;
+		Vertex* middle2;
+		Vertex* middle3;
+
+		HEdge* edge1 = faces[i]->getEdge();
+		HEdge* edge2 = faces[i]->getEdge()->getNextEdge();
+		HEdge* edge3 = faces[i]->getEdge()->getPrevEdge();
+
+		if (dividedEdges.size() > 1 && (edge1 == dividedEdges[1] || edge2 == dividedEdges[1] || edge3 == dividedEdges[1])) {
+			int x = 10;
+		}
+
+		bool edge1In = false; bool edge2In = false; bool edge3In = false;
+
+		for (int j = 0; j < dividedEdges.size(); j++)
+		{
+			if (dividedEdges[j]==edge1)
+			{
+				edge1In = true;
+			}
+			if (dividedEdges[j] == edge2)
+			{
+				edge2In = true;
+			}
+			if (dividedEdges[j] == edge3)
+			{
+				edge3In = true;
+			}
+		}
+
+		HEdge* edge1new1; HEdge* edge1new2; 
+
+		if (edge1In)
+		{
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge1->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getNextEdge() != nullptr)
+				{
+					if (edge1->getPairEdge()->getOriginVertex() == edges2[j]->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getOriginVertex())
+					{
+						edge1new1 = edges2[j];						
+					}
+
+				}
+			}
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge1new1->getPairEdge()->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getOriginVertex() == edge1->getPairEdge()->getOriginVertex())
+				{
+					edge1new2 = edges2[j];
+					middle1 = edge1new2->getOriginVertex();
+				}
+			}
+		}
+		else
+		{
+			HEdge* edge1new3; HEdge* edge1new4;
+			float x, y, z;
+
+			x = (edge1->getOriginVertex()->getX() + edge2->getOriginVertex()->getX()) / 2;
+			y = (edge1->getOriginVertex()->getY() + edge2->getOriginVertex()->getY()) / 2;
+			z = (edge1->getOriginVertex()->getZ() + edge2->getOriginVertex()->getZ()) / 2;
+
+			middle1 = new Vertex(x, y, z);
+
+			points.push_back(middle1);
+
+			edge1new1 = new HEdge(edge1->getOriginVertex()); 
+			edge1new2 = new HEdge(middle1);
+			edge1new3 = new HEdge(middle1);
+			edge1new4 = new HEdge(edge1->getPairEdge()->getOriginVertex());
+			edge1new1->setPairEdge(edge1new3);
+			edge1new3->setPairEdge(edge1new1);
+			edge1new2->setPairEdge(edge1new4);
+			edge1new4->setPairEdge(edge1new2);
+			dividedEdges.push_back(edge1);
+			dividedEdges.push_back(edge1->getPairEdge());
+			edges2.push_back(edge1new1); edges2.push_back(edge1new2); edges2.push_back(edge1new3); edges2.push_back(edge1new4);
+		}
+
+		HEdge* edge2new1; HEdge* edge2new2; 
+
+		if (edge2In)
+		{
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge2->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getNextEdge() != nullptr)
+				{
+					if (edge2->getPairEdge()->getOriginVertex() == edges2[j]->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getOriginVertex())
+					{
+						edge2new1 = edges2[j];
+					}
+				}
+			}
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge2new1->getPairEdge()->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getOriginVertex() == edge2->getPairEdge()->getOriginVertex())
+				{
+					edge2new2 = edges2[j];
+					middle2 = edge2new2->getOriginVertex();
+				}
+			}
+		}
+		else
+		{
+			HEdge* edge2new3; HEdge* edge2new4;
+			float x, y, z;
+
+			x = (edge2->getOriginVertex()->getX() + edge3->getOriginVertex()->getX()) / 2;
+			y = (edge2->getOriginVertex()->getY() + edge3->getOriginVertex()->getY()) / 2;
+			z = (edge2->getOriginVertex()->getZ() + edge3->getOriginVertex()->getZ()) / 2;
+
+			middle2 = new Vertex(x, y, z);
+
+			points.push_back(middle2);
+
+			edge2new1 = new HEdge(edge2->getOriginVertex());
+			edge2new2 = new HEdge(middle2);	
+			edge2new3 = new HEdge(middle2);
+			edge2new4 = new HEdge(edge2->getPairEdge()->getOriginVertex());
+
+			edge2new1->setPairEdge(edge2new3);
+			edge2new3->setPairEdge(edge2new1);
+			edge2new2->setPairEdge(edge2new4);
+			edge2new4->setPairEdge(edge2new2);
+			dividedEdges.push_back(edge2);
+			dividedEdges.push_back(edge2->getPairEdge());
+			edges2.push_back(edge2new1); edges2.push_back(edge2new2); edges2.push_back(edge2new3); edges2.push_back(edge2new4);
+		}
+
+		HEdge* edge3new1; HEdge* edge3new2; 
+
+		if (edge3In)
+		{
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge3->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getNextEdge() != nullptr)
+				{
+					if (edge3->getPairEdge()->getOriginVertex() == edges2[j]->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getPairEdge()->getPrevEdge()->getOriginVertex())
+					{
+						edge3new1 = edges2[j];
+					}
+				}
+			}
+			for (int j = 0; j < edges2.size(); j++)
+			{
+				if (edge3new1->getPairEdge()->getOriginVertex() == edges2[j]->getOriginVertex() && edges2[j]->getPairEdge()->getOriginVertex() == edge3->getPairEdge()->getOriginVertex())
+				{
+					edge3new2 = edges2[j];
+					middle3 = edge3new2->getOriginVertex();
+				}
+			}
+		}
+		else
+		{
+			HEdge* edge3new3; HEdge* edge3new4;
+			float x, y, z;
+
+			x = (edge3->getOriginVertex()->getX() + edge1->getOriginVertex()->getX()) / 2;
+			y = (edge3->getOriginVertex()->getY() + edge1->getOriginVertex()->getY()) / 2;
+			z = (edge3->getOriginVertex()->getZ() + edge1->getOriginVertex()->getZ()) / 2;
+
+			middle3 = new Vertex(x, y, z);
+
+			points.push_back(middle3);
+
+			edge3new1 = new HEdge(edge3->getOriginVertex());
+			edge3new2 = new HEdge(middle3);	
+			edge3new3 = new HEdge(middle3);
+			edge3new4 = new HEdge(edge3->getPairEdge()->getOriginVertex());
+
+			edge3new1->setPairEdge(edge3new3);
+			edge3new3->setPairEdge(edge3new1);
+			edge3new2->setPairEdge(edge3new4);
+			edge3new4->setPairEdge(edge3new2);
+			dividedEdges.push_back(edge3);
+			dividedEdges.push_back(edge3->getPairEdge());
+			edges2.push_back(edge3new1); edges2.push_back(edge3new2); edges2.push_back(edge3new3); edges2.push_back(edge3new4);
+		}
+
+		HEdge* middleEdge1; HEdge* middleEdge1Pair; HEdge* middleEdge2; HEdge* middleEdge2Pair; HEdge* middleEdge3; HEdge* middleEdge3Pair;
+		
+		middleEdge1 = new HEdge(middle1);
+		middleEdge1Pair = new HEdge(middle2);
+		middleEdge2 = new HEdge(middle2);
+		middleEdge2Pair = new HEdge(middle3);
+		middleEdge3 = new HEdge(middle3);
+		middleEdge3Pair = new HEdge(middle1);
+
+		Face* face4 = new Face(middleEdge2);
+
+		middleEdge1->setPrevEdge(middleEdge3);
+		middleEdge1->setNextEdge(middleEdge2);
+		middleEdge1->setFace(face4);
+
+		middleEdge2->setPrevEdge(middleEdge1);
+		middleEdge2->setNextEdge(middleEdge3);
+		middleEdge2->setFace(face4);
+
+		middleEdge3->setPrevEdge(middleEdge2);
+		middleEdge3->setNextEdge(middleEdge1);
+		middleEdge3->setFace(face4);
+
+		middleEdge1->setPairEdge(middleEdge1Pair);
+		middleEdge1Pair->setPairEdge(middleEdge1);
+		middleEdge2->setPairEdge(middleEdge2Pair);
+		middleEdge2Pair->setPairEdge(middleEdge2);
+		middleEdge3->setPairEdge(middleEdge3Pair);
+		middleEdge3Pair->setPairEdge(middleEdge3);
+
+		Face* face1 = new Face(edge1new1);
+		edge1new1->setFace(face1);
+		edge1new1->setPrevEdge(edge3new2);
+		edge1new1->setNextEdge(middleEdge3Pair);
+
+		edge3new2->setFace(face1);
+		edge3new2->setNextEdge(edge1new1);
+		edge3new2->setPrevEdge(middleEdge3Pair);
+
+		middleEdge3Pair->setNextEdge(edge3new2);
+		middleEdge3Pair->setPrevEdge(edge1new1);
+		middleEdge3Pair->setFace(face1);
+
+		Face* face2 = new Face(edge1new2);
+		edge1new2->setNextEdge(edge2new1);
+		edge1new2->setPrevEdge(middleEdge1Pair);
+		edge1new2->setFace(face2);
+
+		middleEdge1Pair->setNextEdge(edge1new2);
+		middleEdge1Pair->setPrevEdge(edge2new1);
+		middleEdge1Pair->setFace(face2);
+
+		edge2new1->setNextEdge(middleEdge1Pair);
+		edge2new1->setPrevEdge(edge1new2);
+		edge2new1->setFace(face2);
+
+		Face* face3 = new Face(middleEdge2Pair);
+		middleEdge2Pair->setNextEdge(edge2new2);
+		middleEdge2Pair->setFace(face3);
+		middleEdge2Pair->setPrevEdge(edge3new1);
+
+		edge3new1->setNextEdge(middleEdge2Pair);
+		edge3new1->setFace(face3);
+		edge3new1->setPrevEdge(edge2new2);
+
+		edge2new2->setNextEdge(edge3new1);
+		edge2new2->setPrevEdge(middleEdge2Pair);
+		edge2new2->setFace(face3);
+
+		edges2.push_back(middleEdge1); edges2.push_back(middleEdge1Pair);
+		edges2.push_back(middleEdge2); edges2.push_back(middleEdge2Pair); 
+		edges2.push_back(middleEdge3); edges2.push_back(middleEdge3Pair);
+
+		faces2.push_back(face1); faces2.push_back(face2); faces2.push_back(face3); faces2.push_back(face4);
 	}
 
-	for (int j = 0; j < division; j++)
+	for (int i = 0; i < edges.size(); i++)
 	{
-		for (int i = 0; i < faces.size(); i++)
-		{
-			QVector<Vertex*> points2 = QVector<Vertex*>();
-			QVector<HEdge*> edges2 = QVector<HEdge*>();
-			QVector<Face*> faces2 = QVector<Face*>();
+		delete edges[i];
+	}
+	for (int i = 0; i < faces.size(); i++)
+	{
+		delete faces[i];
+	}
 
-			QVector<Vertex*> middlePoints = QVector<Vertex*>(3);
-			float x[3], y[3], z[3];
+	edges = edges2;
+	faces = faces2;
 
-			x[0] = (faces[i]->getEdge()->getOriginVertex()->getX() + faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getX()) / 2;
-			x[1] = (faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getX() + faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getX()) / 2;
-			x[2] = (faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getX() + faces[i]->getEdge()->getOriginVertex()->getX()) / 2;
-
-			y[0] = (faces[i]->getEdge()->getOriginVertex()->getY() + faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getY()) / 2;
-			y[1] = (faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getY() + faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getY()) / 2;
-			y[2] = (faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getY() + faces[i]->getEdge()->getOriginVertex()->getY()) / 2;
-
-			z[0] = (faces[i]->getEdge()->getOriginVertex()->getZ() + faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getZ()) / 2;
-			z[1] = (faces[i]->getEdge()->getNextEdge()->getOriginVertex()->getZ() + faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getZ()) / 2;
-			z[2] = (faces[i]->getEdge()->getPrevEdge()->getOriginVertex()->getZ() + faces[i]->getEdge()->getOriginVertex()->getZ()) / 2;
-
-			Vertex* middle1 = new Vertex; Vertex* middle2 = new Vertex; Vertex* middle3 = new Vertex;
-			middle1->setVertex(x[0], y[0], z[0]);
-			middle2->setVertex(x[1], y[1], z[1]);
-			middle3->setVertex(x[2], y[2], z[2]);
-
-			points2.push_back(faces[i]->getEdge()->getOriginVertex());
-			points2.push_back(middle1);
-			points2.push_back(faces[i]->getEdge()->getNextEdge()->getOriginVertex());
-			points2.push_back(middle2);
-			points2.push_back(faces[i]->getEdge()->getPrevEdge()->getOriginVertex());
-			points2.push_back(middle3);
-			
-			HEdge* edge1 = new HEdge; HEdge* edge2 = new HEdge; HEdge* edge3 = new HEdge; HEdge* edge4 = new HEdge; HEdge* edge5 = new HEdge; HEdge* edge6 = new HEdge; 
-			HEdge* edge7 = new HEdge; HEdge* edge8 = new HEdge; HEdge* edge9 = new HEdge; HEdge* edge10 = new HEdge; HEdge* edge11 = new HEdge; HEdge* edge12 = new HEdge; 
-			Face* face1 = new Face; Face* face2 = new Face; Face* face3 = new Face; Face* face4 = new Face; //delete niekde?
-
-			edge1->setOriginVertex(points2[0]);
-			edge2->setOriginVertex(points2[1]);
-			edge3->setOriginVertex(points2[5]);
-			edge4->setOriginVertex(points2[1]);
-			edge5->setOriginVertex(points2[2]);
-			edge6->setOriginVertex(points2[3]);
-			edge7->setOriginVertex(points2[5]);
-			edge8->setOriginVertex(points2[3]);
-			edge9->setOriginVertex(points2[4]);
-			edge10->setOriginVertex(points2[3]);
-			edge11->setOriginVertex(points2[5]);
-			edge12->setOriginVertex(points2[1]);
-
-			edge1->setNextEdge(edge2);
-			edge1->setPrevEdge(edge3);
-			face1->setEdge(edge1);
-			edge1->setFace(face1);
-			edge2->setNextEdge(edge3);
-			edge2->setPrevEdge(edge1);
-			edge3->setNextEdge(edge1);
-			edge3->setPrevEdge(edge2);
-
-			edge4->setNextEdge(edge5);
-			edge4->setPrevEdge(edge6);
-			face2->setEdge(edge4);
-			edge4->setFace(face2);
-			edge5->setNextEdge(edge6);
-			edge5->setPrevEdge(edge4);
-			edge6->setNextEdge(edge4);
-			edge6->setPrevEdge(edge5);
-
-			edge7->setNextEdge(edge8);
-			edge7->setPrevEdge(edge9);
-			face3->setEdge(edge7);
-			edge7->setFace(face3);
-			edge8->setNextEdge(edge9);
-			edge8->setPrevEdge(edge7);
-			edge9->setNextEdge(edge7);
-			edge9->setPrevEdge(edge8);
-
-			edge10->setNextEdge(edge11);
-			edge10->setPrevEdge(edge12);
-			edge10->setPairEdge(edge7);
-			face4->setEdge(edge10);
-			edge10->setFace(face4);
-			edge11->setNextEdge(edge12);
-			edge11->setPrevEdge(edge10);
-			edge11->setPairEdge(edge2);
-			edge12->setNextEdge(edge10);
-			edge12->setPrevEdge(edge11);
-			edge12->setPairEdge(edge6);
-
-			edges2.push_back(edge1); edges2.push_back(edge2); edges2.push_back(edge3); edges2.push_back(edge4); edges2.push_back(edge5); edges2.push_back(edge6); 
-			edges2.push_back(edge7); edges2.push_back(edge8); edges2.push_back(edge9); edges2.push_back(edge10); edges2.push_back(edge11); edges2.push_back(edge12);
-
-			faces2.push_back(face1); faces2.push_back(face2); faces2.push_back(face3); faces2.push_back(face4);
-
-			for (int l = 0; l < faces2.size(); l++)
-			{
-				faces.push_back(faces2[l]);
-			}
-			faces.remove(i);
-		}
+	for (int i = 0; i < edges2.size(); i++)
+	{
+		edges2[i]->printEdge();
+		qDebug() << " ";
+	}
+	for (int i = 0; i < points.size(); i++)
+	{
+		points[i]->printVertex();
+		qDebug() << " ";
 	}
 }
-
 
 void ImageViewer::on_pushButtonGenerate_clicked()
 {
@@ -539,5 +721,5 @@ void ImageViewer::on_pushButtonGenerate_clicked()
 	int division = ui->spinBox->value();
 
 	loadDataFromVTK();
-	divide(division);
+	divide();
 }

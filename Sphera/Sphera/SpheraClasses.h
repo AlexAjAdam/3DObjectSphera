@@ -61,6 +61,7 @@ public:
 	HEdge() { originVertex = nullptr; face = nullptr; prevEdge = nullptr; nextEdge = nullptr; pair = nullptr; }
 	HEdge(const HEdge& edge) { originVertex = edge.originVertex; face = edge.face; prevEdge = edge.prevEdge; nextEdge = edge.nextEdge; pair = edge.pair; }
 	HEdge(Vertex* origin, Face* f, HEdge* prevE, HEdge* nextE, HEdge* pairE) { originVertex = origin; face = f; prevEdge = prevE; nextEdge = nextE; pair = pairE; }
+	HEdge(Vertex* origin) { originVertex = origin; face = nullptr; prevEdge = nullptr; nextEdge = nullptr; pair = nullptr; }
 
 	void setOriginVertex(float x, float y, float z) { originVertex->setVertex(x, y, z); }
 	void setOriginVertex(Vertex* point) { originVertex = point; }
@@ -83,7 +84,6 @@ public:
 		qDebug() << "Pair Edge {origin Vertex} (" << pair->getOriginVertex()->getX() << "," << pair->getOriginVertex()->getY() << "," << pair->getOriginVertex()->getZ() << ")}";
 		qDebug() << "Face {origin Vertex} (" << face->getEdge()->getOriginVertex()->getX() << "," << face->getEdge()->getOriginVertex()->getY() << "," << face->getEdge()->getOriginVertex()->getZ() << ")}";
 	}
-
 	void printEdgeOriginVertex() {
 		qDebug() << "OriginVertex (" << originVertex->getX() << "," << originVertex->getY() << "," << originVertex->getZ() << ")";
 	}

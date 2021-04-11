@@ -71,8 +71,9 @@ private slots:
 	//3D Object Sphere
 
 	void loadDataFromVTK();
-	void divide(int division);
-	void updateFace(int index, QVector<Vertex*> points2, QVector<HEdge*> edges2, QVector<Face*> faces2);
+	void pairEdges();
+	void divide();
+	//void updateFace(int index, QVector<Vertex*> points2, QVector<HEdge*> edges2, QVector<Face*> faces2);
 
 	void on_pushButtonGenerate_clicked();
 };
