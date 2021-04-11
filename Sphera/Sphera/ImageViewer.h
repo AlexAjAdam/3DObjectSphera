@@ -73,7 +73,7 @@ private slots:
 	void loadDataFromVTK();
 	void pairEdges();
 	void divide();
-	//void updateFace(int index, QVector<Vertex*> points2, QVector<HEdge*> edges2, QVector<Face*> faces2);
+	void dealloc();
 
 	void on_pushButtonGenerate_clicked();
 };

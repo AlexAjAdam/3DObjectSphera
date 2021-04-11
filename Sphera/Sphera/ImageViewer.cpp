@@ -16,18 +16,7 @@ ImageViewer::ImageViewer(QWidget* parent)
 
 ImageViewer::~ImageViewer()
 {
-	for (int i = 0; i < points.size(); i++)
-	{
-		delete points[i];
-	}
-	for (int i = 0; i < edges.size(); i++)
-	{
-		delete edges[i];
-	}
-	for (int i = 0; i < faces.size(); i++)
-	{
-		delete faces[i];
-	}
+	dealloc();
 }
 
 //ViewerWidget functions
@@ -703,15 +692,32 @@ void ImageViewer::divide()
 	edges = edges2;
 	faces = faces2;
 
-	for (int i = 0; i < edges2.size(); i++)
+	/*for (int i = 0; i < edges.size(); i++)
 	{
-		edges2[i]->printEdge();
+		edges[i]->printEdge();
 		qDebug() << " ";
-	}
+	}*/
+	
 	for (int i = 0; i < points.size(); i++)
 	{
 		points[i]->printVertex();
 		qDebug() << " ";
+	}
+}
+
+void ImageViewer::dealloc()
+{
+	for (int i = 0; i < points.size(); i++)
+	{
+		delete points[i];
+	}
+	for (int i = 0; i < edges.size(); i++)
+	{
+		delete edges[i];
+	}
+	for (int i = 0; i < faces.size(); i++)
+	{
+		delete faces[i];
 	}
 }
 
@@ -720,6 +726,20 @@ void ImageViewer::on_pushButtonGenerate_clicked()
 	qDebug() << "Generataring Sphere";
 	int division = ui->spinBox->value();
 
+	qDebug() << division;
+
+	dealloc();
+	points.clear();
+	edges.clear();
+	faces.clear();
+
 	loadDataFromVTK();
-	divide();
+
+	if (division > 0)
+	{
+		for (int i = 0; i < division; i++)
+		{
+			divide();
+		}
+	}
 }
