@@ -74,6 +74,8 @@ private slots:
 	void pairEdges();
 	void divide();
 	void dealloc();
+	void saveToVTK();
+	int getPointIndex(Vertex* point);
 
 	void on_pushButtonGenerate_clicked();
 };

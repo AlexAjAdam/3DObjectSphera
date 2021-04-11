@@ -299,9 +299,9 @@ void ImageViewer::loadDataFromVTK()
 	}
 
 	if (fileLines.isEmpty()) {
-		QMessageBox msgBox;
-		msgBox.setText("Data did not load.");
-		msgBox.exec();
+		QMessageBox msgBox1;
+		msgBox1.setText("Data did not load.");
+		msgBox1.exec();
 	}
 
 	QStringList list = fileLines[4].split(QLatin1Char(' '));
@@ -366,11 +366,11 @@ void ImageViewer::loadDataFromVTK()
 
 	pairEdges();
 
-	for (int i = 0; i < edges.size(); i++)
+	/*for (int i = 0; i < edges.size(); i++)
 	{
 		edges[i]->printEdge();
 		qDebug() << " ";
-	}
+	}*/
 
 }
 
@@ -406,21 +406,9 @@ void ImageViewer::pairEdges()
 
 void ImageViewer::divide()
 {
-	/*for (int i = 0; i < edges.size(); i++)
-	{
-		edges[i]->printEdge();
-		qDebug() << " ";
-	}
-	for (int i = 0; i < points.size(); i++)
-	{
-		points[i]->printVertex();
-		qDebug() << " ";
-	}*/
-
 	QVector<HEdge*> edges2 = QVector<HEdge*>();
 	QVector<HEdge*> dividedEdges = QVector<HEdge*>();
 	QVector<Face*> faces2 = QVector<Face*>();
-
 
 	for (int i = 0; i < faces.size(); i++)
 	{
@@ -696,13 +684,13 @@ void ImageViewer::divide()
 	{
 		edges[i]->printEdge();
 		qDebug() << " ";
-	}*/
+	}
 	
 	for (int i = 0; i < points.size(); i++)
 	{
 		points[i]->printVertex();
 		qDebug() << " ";
-	}
+	}*/
 }
 
 void ImageViewer::dealloc()
@@ -718,6 +706,69 @@ void ImageViewer::dealloc()
 	for (int i = 0; i < faces.size(); i++)
 	{
 		delete faces[i];
+	}
+}
+
+void ImageViewer::saveToVTK()
+{
+	for (int i = 0; i < points.size(); i++)
+	{
+		points[i]->printVertex();
+		qDebug() << " ";
+	}
+
+	QString fileName = "NewSphere.vtk";
+
+	QFile file(fileName);
+
+	file.remove();
+
+	if (file.open(QIODevice::WriteOnly)) {
+		QTextStream out(&file);
+
+		out << "# vtk DataFile Version 3.0" << "\n";
+		out << "vtk output" << "\n";
+		out << "ASCII" << "\n";
+		out << "DATASET POLYDATA" << "\n";
+		out << "POINTS " << points.size() << " float" << "\n";
+
+		for (int i = 0; i < points.size(); i++)
+		{
+			out << points[i]->getVertex().x() << " " << points[i]->getVertex().y() << " " << points[i]->getVertex().z() << "\n";
+		}
+
+		out << "\n";
+		out << "POLYGONS " << points.size() << " " << points.size() * 4 << "\n";
+
+		for ( int i = 0; i < faces.size(); i++)
+		{
+			out << 3 << " " << getPointIndex(faces[i]->getEdge()->getOriginVertex()) << " " << getPointIndex(faces[i]->getEdge()->getNextEdge()->getOriginVertex()) << " " << getPointIndex(faces[i]->getEdge()->getPrevEdge()->getOriginVertex()) << "\n";
+		}
+
+		file.close();
+
+		qDebug() << "new sphere in vtk file.";
+		QMessageBox msgBox;
+		msgBox.setText("Data did load to vtk file.");
+		msgBox.exec();
+	}
+	else {
+		qDebug() << "file did not open.";
+		qDebug() << file.errorString();
+		return;
+	}
+}
+
+int ImageViewer::getPointIndex(Vertex* point)
+{
+	int index;
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		if (point == points[i])
+		{
+			return index = i;
+		}
 	}
 }
 
@@ -742,4 +793,6 @@ void ImageViewer::on_pushButtonGenerate_clicked()
 			divide();
 		}
 	}
+
+	saveToVTK();
 }
