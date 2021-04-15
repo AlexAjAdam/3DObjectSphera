@@ -476,6 +476,7 @@ void ImageViewer::divide()
 			z = (edge1->getOriginVertex()->getZ() + edge2->getOriginVertex()->getZ()) / 2;
 
 			middle1 = new Vertex(x, y, z);
+			middle1 = middle1->normalize(middle1);
 
 			points.push_back(middle1);
 
@@ -525,6 +526,7 @@ void ImageViewer::divide()
 			z = (edge2->getOriginVertex()->getZ() + edge3->getOriginVertex()->getZ()) / 2;
 
 			middle2 = new Vertex(x, y, z);
+			middle2 = middle2->normalize(middle2);
 
 			points.push_back(middle2);
 
@@ -575,6 +577,7 @@ void ImageViewer::divide()
 			z = (edge3->getOriginVertex()->getZ() + edge1->getOriginVertex()->getZ()) / 2;
 
 			middle3 = new Vertex(x, y, z);
+			middle3 = middle3->normalize(middle3);
 
 			points.push_back(middle3);
 
@@ -738,7 +741,7 @@ void ImageViewer::saveToVTK()
 		}
 
 		out << "\n";
-		out << "POLYGONS " << points.size() << " " << points.size() * 4 << "\n";
+		out << "POLYGONS " << faces.size() << " " << faces.size() * 4 << "\n";
 
 		for ( int i = 0; i < faces.size(); i++)
 		{

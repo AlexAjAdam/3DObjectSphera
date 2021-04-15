@@ -26,6 +26,8 @@ public:
 	HEdge* getEdge() { return edge; }
 
 	QVector3D getVertex() { return QVector3D(x, y, z); }
+	
+	Vertex* normalize(Vertex* point) { QVector3D vector(x, y, z); vector = vector.normalized(); point->setX(vector.x()); point->setY(vector.y()); point->setZ(vector.z()); return point; }
 
 	void printVertex() { qDebug() << "(" << x << "," << y << "," << z << ")"; }
 
